@@ -1,0 +1,10 @@
+streamlit>=1.39,<2.0
+pandas>=2.0,<3.0
+openpyxl>=3.1,<4.0
+folium>=0.16,<1.0
+streamlit-folium>=0.22,<1.0
+requests>=2.31,<3.0
+geopandas>=0.14,<2.0
+shapely>=2.0,<3.0
+osmnx>=1.7,<3.0
+earthengine-api>=1.0,<2.0
