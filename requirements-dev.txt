@@ -4,7 +4,10 @@
 
 pytest==8.4.1
 pytest-cov==6.2.1
-ruff==0.12.4
+# 0.12.4 still enforced UP038 (`isinstance(x, (A, B))` → `A | B`), which ruff has since
+# deprecated: the union form is measurably slower at runtime, so the rewrite it asked for
+# was a pessimisation. Kept in step with the version used locally.
+ruff==0.16.1
 mypy==1.16.1
 # requests ships no inline types; without these mypy reports the import as untyped.
 types-requests==2.32.4.20250611
