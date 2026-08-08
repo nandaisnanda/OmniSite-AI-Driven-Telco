@@ -1,8 +1,9 @@
 # OmniSite — AI-Driven Telco Infrastructure Intelligence
 
-[![CI](https://github.com/nandaisnanda/omnisite/actions/workflows/ci.yml/badge.svg)](https://github.com/nandaisnanda/omnisite/actions/workflows/ci.yml)
+[![CI](https://github.com/nandaisnanda/OmniSite-AI-Driven-Telco/actions/workflows/ci.yml/badge.svg)](https://github.com/nandaisnanda/OmniSite-AI-Driven-Telco/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/deploy?repository=nandaisnanda%2FOmniSite-AI-Driven-Telco&branch=main&mainModule=app.py)
 
 Desktop screening for telco tower placement. Click a point on the map — or upload up to
 100 surveyed coordinates — and OmniSite runs five public-data engines concurrently to
@@ -97,6 +98,29 @@ The suite is offline by design; `test_ml.py` is a separate manual diagnostic tha
 the real pipeline against live services. CI (GitHub Actions) runs lint, types, tests,
 a Docker build, an advisory dependency audit, and a check that no credential file is
 ever tracked by git.
+
+## Deploy on Streamlit Community Cloud
+
+[![Deploy](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/deploy?repository=nandaisnanda%2FOmniSite-AI-Driven-Telco&branch=main&mainModule=app.py)
+
+Point a new app at `app.py` on `main`, Python 3.13, then paste your credentials into
+**Settings → Secrets** using the same TOML shape as
+[.streamlit/secrets.toml.example](.streamlit/secrets.toml.example):
+
+```toml
+OPENCELLID_API_KEY = "your-key-here"
+AUTH_ENABLED = "true"
+APP_PASSWORD = "choose-a-long-random-passphrase"
+```
+
+Two deployment-specific notes:
+
+- **Turn authentication on.** A public Streamlit URL with `AUTH_ENABLED = "false"` lets
+  any visitor spend your OpenCelliD and Earth Engine quota.
+- **Earth Engine needs a file, not a string.** `GEE_SERVICE_ACCOUNT_FILE` expects a path
+  on disk, and Community Cloud has nowhere to put a gitignored key — so the geospatial
+  engine runs in its public-elevation fallback there. Use Docker or any host with a
+  writable filesystem for a deployment with Earth Engine fully enabled.
 
 ## Docker
 
