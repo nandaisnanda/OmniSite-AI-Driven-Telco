@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, types & tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Ruff
+        run: ruff check .
+
+      - name: Mypy
+        run: mypy app.py
+
+      # Offline by design: the suite covers scoring policy, coordinate maths, header
+      # detection and the i18n contract. Live engine calls are exercised manually
+      # via test_ml.py against real credentials.
+      - name: Pytest
+        run: pytest --cov --cov-report=term-missing
+
+  docker:
+    name: Docker image builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # Build only — proves the Dockerfile stays runnable. Publishing is a deploy
+      # decision, not a CI side effect.
+      - name: Build image
+        run: docker build -t omnisite:ci .
+
+  audit:
+    name: Dependency audit (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install pip-audit
+        run: pip install pip-audit==2.8.0
+
+      # Advisory: a fresh CVE in a transitive geospatial dependency should raise a
+      # flag, not block an unrelated pull request.
+      - name: Audit runtime dependencies
+        run: pip-audit --requirement requirements.txt --strict
+        continue-on-error: true
+
+  secrets:
+    name: No credentials tracked
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      # The Earth Engine service-account key and secrets.toml are gitignored. Fail
+      # the build the moment either is ever committed.
+      - name: Assert credential files are not in git
+        run: |
+          if git ls-files --error-unmatch apigee.json .streamlit/secrets.toml 2>/dev/null; then
+            echo "::error::Credential file is tracked by git"
+            exit 1
+          fi
+          echo "No credential files tracked."

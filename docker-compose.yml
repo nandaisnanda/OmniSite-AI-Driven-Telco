@@ -1,0 +1,26 @@
+services:
+  omnisite:
+    build: .
+    image: omnisite:latest
+    container_name: omnisite
+    ports:
+      - "8501:8501"
+    environment:
+      - OPENCELLID_API_KEY=${OPENCELLID_API_KEY:-}
+      - GEE_SERVICE_ACCOUNT_FILE=${GEE_SERVICE_ACCOUNT_FILE:-apigee.json}
+      - AUTH_ENABLED=${AUTH_ENABLED:-false}
+      - AUTH_MODE=${AUTH_MODE:-session}
+      - APP_PASSWORD=${APP_PASSWORD:-}
+      - RATE_LIMIT_ANALYSIS_PER_MINUTE=${RATE_LIMIT_ANALYSIS_PER_MINUTE:-10}
+      - RATE_LIMIT_RECOMMEND_PER_MINUTE=${RATE_LIMIT_RECOMMEND_PER_MINUTE:-3}
+      - MAX_QUEUED_JOBS=${MAX_QUEUED_JOBS:-50}
+      - JOB_TIMEOUT_SECONDS=${JOB_TIMEOUT_SECONDS:-150}
+    volumes:
+      # Earth Engine service-account key, mounted read-only. Optional: without it
+      # the geospatial engine degrades to the public-elevation fallback.
+      - ./apigee.json:/app/apigee.json:ro
+      - omnisite_cache:/app/cache
+    restart: unless-stopped
+
+volumes:
+  omnisite_cache:

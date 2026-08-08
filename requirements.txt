@@ -1,10 +1,26 @@
-streamlit>=1.39,<2.0
-pandas>=2.0,<3.0
-openpyxl>=3.1,<4.0
-folium>=0.16,<1.0
-streamlit-folium>=0.22,<1.0
-requests>=2.31,<3.0
-geopandas>=0.14,<2.0
-shapely>=2.0,<3.0
-osmnx>=1.7,<3.0
-earthengine-api>=1.0,<2.0
+# Runtime dependencies only. Development and CI tooling lives in requirements-dev.txt.
+#
+# Removed in the 2026-08 audit: pydantic, pydantic-settings, bleach, python-multipart,
+# opentelemetry-{api,sdk,instrumentation-requests} and prometheus-client. None of them
+# was ever imported by app.py — they were shipped under "Security & validation" and
+# "Observability" headings for controls the app did not actually have.
+
+# Core runtime
+streamlit==1.47.1
+streamlit-searchbox==0.1.20
+streamlit-folium==0.24.0
+altair==5.5.0
+pandas==2.3.1
+numpy==2.2.6
+openpyxl==3.1.5
+folium==0.20.0
+requests==2.32.4
+shapely==2.1.0
+osmnx==1.7.0
+earthengine-api==1.0.0
+
+# Transitive, pinned deliberately: osmnx imports geopandas even though app.py does not.
+geopandas==1.0.1
+
+# Unsupervised site segmentation (KMeans + IsolationForest)
+scikit-learn==1.7.1

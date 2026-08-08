@@ -1,13 +1,29 @@
 [theme]
 base = "dark"
 primaryColor = "#00D2FF"
-backgroundColor = "#000000"
-secondaryBackgroundColor = "#11141A"
-textColor = "#FFFFFF"
+backgroundColor = "#0E1117"
+secondaryBackgroundColor = "#141922"
+textColor = "#F2F6FA"
 font = "sans serif"
 
 [client]
 toolbarMode = "minimal"
+# Tracebacks belong in the server log, not in the visitor's browser: they leak file
+# paths, library versions and query internals. Override to "full" locally when debugging.
+showErrorDetails = "type"
 
 [browser]
 gatherUsageStats = false
+
+[server]
+maxUploadSize = 10
+maxMessageSize = 20
+enableXsrfProtection = true
+headless = true
+
+[runner]
+fastReruns = true
+magicEnabled = false
+
+[logger]
+level = "info"

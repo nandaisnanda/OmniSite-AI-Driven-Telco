@@ -9,6 +9,27 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Streamlit artifacts
 .streamlit/cache/
+
+# Runtime cache & logs — never commit these.
+/cache/
+*.out
+*.err
+*.log
+
+# Local working notes — not part of the published project.
+AUDIT_REPORT.md
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/

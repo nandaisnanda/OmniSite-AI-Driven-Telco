@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/cache/
+
+# Runtime cache & logs
+/cache/
+*.out
+*.err
+*.log
+
+# Secrets & credentials
+apigee.json
+.env
+.env.*
+
+# Tests
+tests/
+
+# Docs
+AUDIT_REPORT.md
+README.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml

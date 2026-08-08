@@ -1,0 +1,97 @@
+[project]
+name = "omnisite"
+version = "1.0.0"
+description = "AI-Driven Telco Infrastructure Intelligence"
+requires-python = ">=3.10"
+# Mirrors requirements.txt. pydantic, pydantic-settings, bleach, python-multipart,
+# opentelemetry-* and prometheus-client were removed in the 2026-08 audit: nothing in
+# app.py imported them. geopandas stays because osmnx imports it.
+dependencies = [
+    "streamlit==1.47.1",
+    "streamlit-searchbox==0.1.20",
+    "streamlit-folium==0.24.0",
+    "pandas==2.3.1",
+    "numpy==2.2.6",
+    "openpyxl==3.1.5",
+    "folium==0.20.0",
+    "requests==2.32.4",
+    "geopandas==1.0.1",
+    "shapely==2.1.0",
+    "osmnx==1.7.0",
+    "earthengine-api==1.0.0",
+    "scikit-learn==1.7.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.4.1",
+    "pytest-cov==6.2.1",
+    "ruff==0.12.4",
+    "mypy==1.16.1",
+    "pip-audit==2.8.0",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "T20", "RUF"]
+# E501: the long lines are the EN/ZH/ID translation tables; wrapping them makes the
+# per-language diff unreadable and hides missing keys.
+# E701/E702: the UI helpers use one-line guards deliberately and consistently.
+ignore = [
+    "E501",
+    "E701", "E702",
+    "B008",
+    # RUF001: the EN/ZH/ID tables intentionally contain full-width and typographic
+    # punctuation (：·—…). It is the translated copy, not a homoglyph mistake.
+    "RUF001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+# test_ml.py is a manual end-to-end diagnostic run against the live engines, not part of
+# the pytest suite. Printing is its entire output, and it configures stdout before import.
+"test_ml.py" = ["T201", "E402"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unused_configs = true
+check_untyped_defs = true
+# Not strict: app.py is a single Streamlit module whose surface is largely untyped
+# third-party callbacks. Turning on strict here produces hundreds of unactionable errors
+# about folium and streamlit internals, which trains everyone to ignore the checker.
+# Raise this once the module is split into typed packages.
+strict = false
+exclude = "tests/"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+filterwarnings = [
+    # The suite imports Streamlit in bare mode; its missing-context warnings are expected.
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+# The suite covers decision logic, coordinate maths, header detection and the i18n
+# contract. It deliberately does not cover the Streamlit render path or the live engine
+# calls, so this floor tracks what is actually testable in-process — raise it when the
+# rendering layer is separated from the logic.
+fail_under = 30
+
+[tool.pip-audit]
+skip-editable = true
