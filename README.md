@@ -103,7 +103,15 @@ ever tracked by git.
 
 [![Deploy](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/deploy?repository=nandaisnanda%2FOmniSite-AI-Driven-Telco&branch=main&mainModule=app.py)
 
-Point a new app at `app.py` on `main`, Python 3.13, then paste your credentials into
+> **Set Python to 3.13 under Advanced settings before deploying.** Community Cloud now
+> defaults to 3.14, and numpy, pandas, shapely and scikit-learn publish no cp314 wheels at
+> the versions pinned here. Deploying on 3.14 makes pip build shapely from source, which
+> fails on a missing `geos-config` and missing numpy headers — the app then never starts
+> and the URL serves "your app is waking up" indefinitely, with the real cause visible
+> only in the deploy log. The Python version cannot be changed after the app is created;
+> a mis-set app has to be deleted and redeployed.
+
+Point a new app at `app.py` on `main`, then paste your credentials into
 **Settings → Secrets** using the same TOML shape as
 [.streamlit/secrets.toml.example](.streamlit/secrets.toml.example):
 
