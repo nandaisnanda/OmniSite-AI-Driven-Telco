@@ -10,7 +10,10 @@ font = "sans serif"
 toolbarMode = "minimal"
 # Tracebacks belong in the server log, not in the visitor's browser: they leak file
 # paths, library versions and query internals. Override to "full" locally when debugging.
-showErrorDetails = "type"
+# TEMPORARY: surfaced to diagnose a Community Cloud startup crash that reproduces
+# nowhere else. Revert to "type" the moment the cause is found — a public deployment
+# must not serve tracebacks.
+showErrorDetails = "full"
 
 [browser]
 gatherUsageStats = false
